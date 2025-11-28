@@ -139,7 +139,7 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./ios-build/rust-sdks/target/aarch64-apple-ios/release/liblivekit_ffi.a
+                  asset_path: ./ios-build/aarch64-apple-ios/release/liblivekit_ffi.a
                   asset_name: liblivekit_ffi-aarch64-apple-ios.a
                   asset_content_type: application/octet-stream
 
@@ -149,7 +149,7 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./ios-build/rust-sdks/target/aarch64-apple-ios/release/liblivekit_ffi.dylib
+                  asset_path: ./ios-build/aarch64-apple-ios/release/liblivekit_ffi.dylib
                   asset_name: liblivekit_ffi-aarch64-apple-ios.dylib
                   asset_content_type: application/octet-stream
 
@@ -159,7 +159,7 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./ios-build/rust-sdks/target/aarch64-apple-ios-sim/release/liblivekit_ffi.a
+                  asset_path: ./ios-build/aarch64-apple-ios-sim/release/liblivekit_ffi.a
                   asset_name: liblivekit_ffi-aarch64-apple-ios-sim.a
                   asset_content_type: application/octet-stream
 
@@ -169,6 +169,6 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./ios-build/rust-sdks/target/aarch64-apple-ios-sim/release/liblivekit_ffi.dylib
+                  asset_path: ./ios-build/aarch64-apple-ios-sim/release/liblivekit_ffi.dylib
                   asset_name: liblivekit_ffi-aarch64-apple-ios-sim.dylib
                   asset_content_type: application/octet-stream
