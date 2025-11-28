@@ -18,8 +18,8 @@ echo "Building for iOS simulator (aarch64-apple-ios-sim)..."
 cargo build --release --target aarch64-apple-ios-sim
 
 # Build for iOS simulator (x86_64) - for Intel Mac simulators
-echo "Building for iOS simulator (x86_64-apple-ios)..."
-cargo build --release --target x86_64-apple-ios
+# echo "Building for iOS simulator (x86_64-apple-ios)..."
+# cargo build --release --target x86_64-apple-ios
 
 echo "✓ iOS build completed successfully!"
 echo ""
