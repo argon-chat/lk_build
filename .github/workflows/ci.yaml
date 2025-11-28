@@ -106,10 +106,56 @@ jobs:
                       rust-sdks/target/aarch64-apple-ios-sim/release/liblivekit_ffi.a
                       rust-sdks/target/aarch64-apple-ios-sim/release/liblivekit_ffi.dylib
 
+    build-android:
+        runs-on: ubuntu-latest
+        needs: determine-version
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  lfs: true
+                  submodules: "recursive"
+
+            - name: Install protobuf
+              run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+
+            - name: Set up Rust
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+
+            - name: Install cargo-ndk
+              run: cargo install cargo-ndk
+
+            - name: Set up JDK
+              uses: actions/setup-java@v4
+              with:
+                  distribution: "temurin"
+                  java-version: "17"
+
+            - name: Setup Android SDK
+              uses: android-actions/setup-android@v3
+
+            - name: Install NDK
+              run: sdkmanager "ndk;26.1.10909125"
+
+            - name: Build Android
+              env:
+                  ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/26.1.10909125
+              run: ./build_android.sh
+
+            - name: Upload build artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: android-build
+                  path: |
+                      rust-sdks/livekit-ffi/jniLibs/**/*.so
+
     release:
         runs-on: ubuntu-latest
         needs:
             - build-ios
+            - build-android
             - determine-version
         steps:
             - name: Download all artifacts
@@ -120,6 +166,12 @@ jobs:
                   cd ios-build/rust-sdks/target
                   zip -j liblivekit_ffi-aarch64-apple-ios.zip aarch64-apple-ios/release/liblivekit_ffi.a
                   zip -j liblivekit_ffi-aarch64-apple-ios-sim.zip aarch64-apple-ios-sim/release/liblivekit_ffi.a
+                  ls -lh *.zip
+
+            - name: Compress Android libraries
+              run: |
+                  cd android-build
+                  zip -r liblivekit_ffi-android.zip jniLibs/
                   ls -lh *.zip
 
             - name: Create Release
@@ -174,3 +226,13 @@ jobs:
                   asset_path: ./ios-build/rust-sdks/target/aarch64-apple-ios-sim/release/liblivekit_ffi.dylib
                   asset_name: liblivekit_ffi-aarch64-apple-ios-sim.dylib
                   asset_content_type: application/octet-stream
+
+            - name: Upload Android Libraries
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: ./android-build/liblivekit_ffi-android.zip
+                  asset_name: liblivekit_ffi-android.zip
+                  asset_content_type: application/zip
