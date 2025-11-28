@@ -137,11 +137,12 @@ jobs:
               uses: android-actions/setup-android@v3
 
             - name: Install NDK
-              run: sdkmanager "ndk;26.1.10909125"
+              run: |
+                  sdkmanager "ndk;26.1.10909125"
+                  echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/26.1.10909125" >> $GITHUB_ENV
+                  echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/26.1.10909125" >> $GITHUB_ENV
 
             - name: Build Android
-              env:
-                  ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/26.1.10909125
               run: ./build_android.sh
 
             - name: Upload build artifact
