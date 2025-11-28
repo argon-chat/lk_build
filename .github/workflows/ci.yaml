@@ -115,10 +115,12 @@ jobs:
             - name: Download all artifacts
               uses: actions/download-artifact@v4
 
-            - name: List downloaded files
+            - name: Compress static libraries
               run: |
-                  echo "Listing downloaded artifacts:"
-                  find . -type f -name "*.a" -o -name "*.dylib"
+                  cd ios-build/rust-sdks/target
+                  zip -j liblivekit_ffi-aarch64-apple-ios.zip aarch64-apple-ios/release/liblivekit_ffi.a
+                  zip -j liblivekit_ffi-aarch64-apple-ios-sim.zip aarch64-apple-ios-sim/release/liblivekit_ffi.a
+                  ls -lh *.zip
 
             - name: Create Release
               id: create_release
@@ -133,42 +135,42 @@ jobs:
                       **Full Changelog**: https://github.com/argon-chat/lk_build/compare/${{ needs.determine-version.outputs.current_tag }}...${{ needs.determine-version.outputs.tag }}
                   prerelease: false
 
-            - name: Upload iOS Device Library (Static)
+            - name: Upload iOS Device Static Library
               uses: actions/upload-release-asset@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./ios-build/aarch64-apple-ios/release/liblivekit_ffi.a
-                  asset_name: liblivekit_ffi-aarch64-apple-ios.a
-                  asset_content_type: application/octet-stream
+                  asset_path: ./ios-build/rust-sdks/target/liblivekit_ffi-aarch64-apple-ios.zip
+                  asset_name: liblivekit_ffi-aarch64-apple-ios.zip
+                  asset_content_type: application/zip
 
-            - name: Upload iOS Device Library (Dynamic)
+            - name: Upload iOS Device Dynamic Library
               uses: actions/upload-release-asset@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./ios-build/aarch64-apple-ios/release/liblivekit_ffi.dylib
+                  asset_path: ./ios-build/rust-sdks/target/aarch64-apple-ios/release/liblivekit_ffi.dylib
                   asset_name: liblivekit_ffi-aarch64-apple-ios.dylib
                   asset_content_type: application/octet-stream
 
-            - name: Upload iOS Simulator Library (Static)
+            - name: Upload iOS Simulator Static Library
               uses: actions/upload-release-asset@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./ios-build/aarch64-apple-ios-sim/release/liblivekit_ffi.a
-                  asset_name: liblivekit_ffi-aarch64-apple-ios-sim.a
-                  asset_content_type: application/octet-stream
+                  asset_path: ./ios-build/rust-sdks/target/liblivekit_ffi-aarch64-apple-ios-sim.zip
+                  asset_name: liblivekit_ffi-aarch64-apple-ios-sim.zip
+                  asset_content_type: application/zip
 
-            - name: Upload iOS Simulator Library (Dynamic)
+            - name: Upload iOS Simulator Dynamic Library
               uses: actions/upload-release-asset@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./ios-build/aarch64-apple-ios-sim/release/liblivekit_ffi.dylib
+                  asset_path: ./ios-build/rust-sdks/target/aarch64-apple-ios-sim/release/liblivekit_ffi.dylib
                   asset_name: liblivekit_ffi-aarch64-apple-ios-sim.dylib
                   asset_content_type: application/octet-stream
