@@ -96,41 +96,74 @@ jobs:
             - name: Build IOS
               run: ./build_ios.sh
 
-            # - name: Upload build artifact
-            #   uses: actions/upload-artifact@v4
-            #   with:
-            #       name: ios-build
-            #       path: |
-            #           ios-build.tar.gz
+            - name: Upload build artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ios-build
+                  path: |
+                      rust-sdks/target/aarch64-apple-ios/release/liblivekit_ffi.a
+                      rust-sdks/target/aarch64-apple-ios/release/liblivekit_ffi.dylib
+                      rust-sdks/target/aarch64-apple-ios-sim/release/liblivekit_ffi.a
+                      rust-sdks/target/aarch64-apple-ios-sim/release/liblivekit_ffi.dylib
 
-    # release:
-    #     runs-on: ubuntu-latest
-    #     needs:
-    #         - build
-    #         - determine-version
-    #     steps:
-    #         - name: Download all artifacts
-    #           uses: actions/download-artifact@v4
+    release:
+        runs-on: ubuntu-latest
+        needs:
+            - build
+            - determine-version
+        steps:
+            - name: Download all artifacts
+              uses: actions/download-artifact@v4
 
-    #         - name: Create Release
-    #           id: create_release
-    #           uses: actions/create-release@v1
-    #           env:
-    #               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #           with:
-    #               tag_name: ${{ needs.determine-version.outputs.tag }}
-    #               release_name: Release ${{ needs.determine-version.outputs.tag }}
-    #               draft: false
-    #               body: |
-    #                   **Full Changelog**: https://github.com/argon-chat/k3sd/compare/${{ needs.determine-version.outputs.current_tag }}...${{ needs.determine-version.outputs.tag }}
-    #               prerelease: false
+            - name: Create Release
+              id: create_release
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ needs.determine-version.outputs.tag }}
+                  release_name: Release ${{ needs.determine-version.outputs.tag }}
+                  draft: false
+                  body: |
+                      **Full Changelog**: https://github.com/argon-chat/lk_build/compare/${{ needs.determine-version.outputs.current_tag }}...${{ needs.determine-version.outputs.tag }}
+                  prerelease: false
 
-    #         - name: Upload Linux AMD64 Release Asset
-    #           uses: actions/upload-release-asset@v1
-    #           env:
-    #               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #           with:
-    #               upload_url: ${{ steps.create_release.outputs.upload_url }}
-    #               asset_path: ./k3sd-linux-amd64/k3sd-linux-amd64.tar.gz
-    #               asset_name: k3sd-linux-amd64.tar.gz
-    #               asset_content_type: application/gzip
+            - name: Upload iOS Device Library (Static)
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: ./ios-build/liblivekit_ffi.a
+                  asset_name: liblivekit_ffi-aarch64-apple-ios.a
+                  asset_content_type: application/octet-stream
+
+            - name: Upload iOS Device Library (Dynamic)
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: ./ios-build/liblivekit_ffi.dylib
+                  asset_name: liblivekit_ffi-aarch64-apple-ios.dylib
+                  asset_content_type: application/octet-stream
+
+            - name: Upload iOS Simulator Library (Static)
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: ./ios-build/liblivekit_ffi.a
+                  asset_name: liblivekit_ffi-aarch64-apple-ios-sim.a
+                  asset_content_type: application/octet-stream
+
+            - name: Upload iOS Simulator Library (Dynamic)
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: ./ios-build/liblivekit_ffi.dylib
+                  asset_name: liblivekit_ffi-aarch64-apple-ios-sim.dylib
+                  asset_content_type: application/octet-stream
