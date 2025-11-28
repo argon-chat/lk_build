@@ -75,36 +75,36 @@ jobs:
                       console.log(`Next version: ${nextVersion}`);
                       core.setOutput('tag', nextVersion);
 
-    build-ios:
-        runs-on: macos-latest
-        needs: determine-version
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-                  lfs: true
-                  submodules: "recursive"
+    # build-ios:
+    #     runs-on: macos-latest
+    #     needs: determine-version
+    #     steps:
+    #         - uses: actions/checkout@v4
+    #           with:
+    #               fetch-depth: 0
+    #               lfs: true
+    #               submodules: "recursive"
 
-            - name: Install protobuf
-              run: brew install protobuf
+    #         - name: Install protobuf
+    #           run: brew install protobuf
 
-            - name: Set up Rust
-              uses: dtolnay/rust-toolchain@stable
-              with:
-                  targets: aarch64-apple-ios,aarch64-apple-ios-sim,x86_64-apple-ios
+    #         - name: Set up Rust
+    #           uses: dtolnay/rust-toolchain@stable
+    #           with:
+    #               targets: aarch64-apple-ios,aarch64-apple-ios-sim,x86_64-apple-ios
 
-            - name: Build IOS
-              run: ./build_ios.sh
+    #         - name: Build IOS
+    #           run: ./build_ios.sh
 
-            - name: Upload build artifact
-              uses: actions/upload-artifact@v4
-              with:
-                  name: ios-build
-                  path: |
-                      rust-sdks/target/aarch64-apple-ios/release/liblivekit_ffi.a
-                      rust-sdks/target/aarch64-apple-ios/release/liblivekit_ffi.dylib
-                      rust-sdks/target/aarch64-apple-ios-sim/release/liblivekit_ffi.a
-                      rust-sdks/target/aarch64-apple-ios-sim/release/liblivekit_ffi.dylib
+    #         - name: Upload build artifact
+    #           uses: actions/upload-artifact@v4
+    #           with:
+    #               name: ios-build
+    #               path: |
+    #                   rust-sdks/target/aarch64-apple-ios/release/liblivekit_ffi.a
+    #                   rust-sdks/target/aarch64-apple-ios/release/liblivekit_ffi.dylib
+    #                   rust-sdks/target/aarch64-apple-ios-sim/release/liblivekit_ffi.a
+    #                   rust-sdks/target/aarch64-apple-ios-sim/release/liblivekit_ffi.dylib
 
     build-android:
         runs-on: ubuntu-latest
@@ -155,7 +155,7 @@ jobs:
     release:
         runs-on: ubuntu-latest
         needs:
-            - build-ios
+            # - build-ios
             - build-android
             - determine-version
         steps:
