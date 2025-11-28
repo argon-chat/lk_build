@@ -33,7 +33,7 @@ jobs:
             - name: Get Current Tag
               id: current_tag
               run: |
-                  current_tag=$(git describe --tags --abbrev=0 HEAD^)
+                  current_tag=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "v0.0.0")
                   echo "current_tag=$current_tag" >> $GITHUB_ENV
                   echo "::set-output name=current_tag::$current_tag"
               env:
